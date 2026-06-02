@@ -1,59 +1,331 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ProjectPilot
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+ProjectPilot is a modern Project Management System built with Laravel. It helps teams manage projects, tasks, team members, clients, and project progress from a centralized dashboard.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The goal of ProjectPilot is to provide a simple, scalable, and efficient platform for managing software development projects and team collaboration.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### Authentication & Authorization
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+* User Registration
+* Login & Logout
+* Password Reset
+* Profile Management
+* Role-Based Access Control (RBAC)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User Roles
 
-## Laravel Sponsors
+* Super Admin
+* Project Manager
+* Team Member
+* Client
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Dashboard
 
-### Premium Partners
+* Total Projects
+* Active Projects
+* Completed Projects
+* Pending Projects
+* Recent Activities
+* Project Statistics
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Project Management
 
-## Contributing
+* Create Projects
+* Edit Projects
+* Delete Projects
+* Project Status Management
+* Project Priority Management
+* Project Details View
+* Project Search & Filters
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Team Management
 
-## Code of Conduct
+* Assign Team Members to Projects
+* Manage Project Teams
+* User Assignment Tracking
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Task Management
 
-## Security Vulnerabilities
+* Create Tasks
+* Assign Tasks
+* Task Priorities
+* Task Status Tracking
+* Due Dates
+* Task Progress Monitoring
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Task Collaboration
+
+* Task Comments
+* Activity History
+* Attachments
+
+### File Management
+
+* Upload Project Files
+* Manage Documents
+* Download Attachments
+
+### Reporting
+
+* Project Progress Reports
+* Team Performance Reports
+* Task Completion Reports
+
+### Notifications
+
+* Task Assignment Notifications
+* Project Updates
+* Deadline Reminders
+
+---
+
+## Technology Stack
+
+### Backend
+
+* Laravel 12
+* PHP 8.3+
+* MySQL 8
+
+### Frontend
+
+* Blade Templates
+* Bootstrap 5
+* JavaScript
+* jQuery
+
+### Packages
+
+* Spatie Laravel Permission
+* Laravel Breeze
+* Laravel Reverb (Optional)
+* Laravel Excel (Future)
+
+---
+
+## Project Structure
+
+```text
+app/
+├── Http/
+│   ├── Controllers/
+│   ├── Requests/
+│   └── Middleware/
+│
+├── Models/
+│
+├── Services/
+│
+├── Policies/
+│
+└── Providers/
+
+resources/
+├── views/
+│   ├── layouts/
+│   ├── dashboard/
+│   ├── projects/
+│   ├── tasks/
+│   └── components/
+
+routes/
+├── web.php
+
+database/
+├── migrations/
+├── seeders/
+```
+
+---
+
+## Database Modules
+
+### Core Tables
+
+```text
+users
+roles
+permissions
+
+projects
+project_members
+
+tasks
+task_comments
+task_attachments
+
+clients
+
+notifications
+
+activity_logs
+```
+
+---
+
+## Project Status
+
+Available project statuses:
+
+```text
+Pending
+In Progress
+On Hold
+Completed
+Cancelled
+```
+
+---
+
+## Task Status
+
+Available task statuses:
+
+```text
+Todo
+In Progress
+Testing
+Done
+```
+
+---
+
+## Task Priority
+
+Available task priorities:
+
+```text
+Low
+Medium
+High
+Critical
+```
+
+---
+
+## Development Roadmap
+
+### Phase 1 (MVP)
+
+* Authentication
+* Roles & Permissions
+* Dashboard
+* Project CRUD
+* Project Members
+* Task CRUD
+
+### Phase 2
+
+* Task Comments
+* File Uploads
+* Notifications
+* Activity Logs
+
+### Phase 3
+
+* Time Tracking
+* Leave Management
+* Attendance System
+* Reporting Module
+
+### Phase 4
+
+* Client Portal
+* Realtime Chat
+* Kanban Board
+* Gantt Chart
+* API Integration
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone <repository-url>
+cd ProjectPilot
+```
+
+### Install Dependencies
+
+```bash
+composer install
+npm install
+```
+
+### Environment Setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### Configure Database
+
+Update `.env` file:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=projectpilot
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### Run Migrations
+
+```bash
+php artisan migrate
+```
+
+### Seed Roles
+
+```bash
+php artisan db:seed
+```
+
+### Start Development Server
+
+```bash
+php artisan serve
+```
+
+Visit:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## Future Enhancements
+
+* Multi-Tenant Support
+* Mobile Application
+* Advanced Analytics
+* Calendar Integration
+* Email Integration
+* Slack Integration
+* AI-Based Project Insights
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is proprietary and intended for internal or commercial use.
+
+---
+
+## Author
+
+ProjectPilot Development Team
+
+Built with Laravel ❤️
