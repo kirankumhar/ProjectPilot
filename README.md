@@ -326,6 +326,8 @@ This project is proprietary and intended for internal or commercial use.
 
 ## Author
 
-ProjectPilot Development Team
+Developed and maintained by Kieran.
+
+ProjectPilot is an independent project management platform built using Laravel and modern web technologies.
 
 Built with Laravel ❤️
