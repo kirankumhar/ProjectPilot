@@ -5,7 +5,7 @@
                 <img src="{{ asset('assets/img/users/user_1.jpg') }}" alt="User Profile">
                 <div class="user__name">
                     <strong>{{ auth()->user()->name ?? 'User' }}</strong><br>
-                    <span class="text-muted text-uppercase">{{ auth()->user()->role ?? 'Member' }}</span>
+                    <span class="text-muted text-uppercase">{{ auth()->user()->role_display ?? 'Developer' }}</span>
                     <div class="user__controls">
                         <div class="dropdown">
                             <button class="btn btn-light btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -75,6 +75,34 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="{{ request()->routeIs('chat.*') ? 'active' : '' }}">
+                    <a href="{{ route('chat.index') }}">
+                        <span class="icon li-bubble"></span> 
+                        <span class="text">Team Messenger</span>
+                    </a>
+                </li>
+
+                @if(auth()->check() && auth()->user()->isAdmin())
+                <li class="openable {{ request()->routeIs('users.*') ? 'open active' : '' }}">
+                    <a href="#">
+                        <span class="icon li-users"></span> 
+                        <span class="text">Team Members</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="{{ route('users.index') }}" class="no-icon">
+                                <span class="text">All Users / Developers</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('users.create') }}" class="no-icon">
+                                <span class="text">Add New Member</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
 
                 <li class="title">Account</li>
                 <li class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">

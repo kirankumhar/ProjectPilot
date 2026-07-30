@@ -83,6 +83,11 @@
                                         @if($task->description)
                                             <div class="small text-muted">{{ Str::limit($task->description, 60) }}</div>
                                         @endif
+                                        @if($task->attachment)
+                                            <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mt-1" title="{{ $task->attachment_name }}">
+                                                <i class="fa fa-paperclip margin-right-5"></i> Attachment
+                                            </a>
+                                        @endif
                                     </td>
                                     <td>
                                         <a href="{{ route('projects.show', $task->project) }}" class="badge badge-light border">

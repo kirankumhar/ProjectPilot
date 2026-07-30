@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Storage;
+
 class TaskController extends Controller
 {
     /**
@@ -73,7 +75,12 @@ class TaskController extends Controller
             'due_date' => 'nullable|date|after_or_equal:start_date',
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'required|exists:users,id',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,zip,rar,txt|max:10240',
         ]);
+
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
+        }
 
         Task::create($validated);
 
@@ -119,7 +126,15 @@ class TaskController extends Controller
             'due_date' => 'nullable|date|after_or_equal:start_date',
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'required|exists:users,id',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,zip,rar,txt|max:10240',
         ]);
+
+        if ($request->hasFile('attachment')) {
+            if ($task->attachment && Storage::disk('public')->exists($task->attachment)) {
+                Storage::disk('public')->delete($task->attachment);
+            }
+            $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
+        }
 
         $task->update($validated);
 

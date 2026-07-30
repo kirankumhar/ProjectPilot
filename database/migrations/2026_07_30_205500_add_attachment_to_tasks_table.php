@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('developer');
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->string('attachment')->nullable()->after('due_date');
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-            $table->dropColumn('role');
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropColumn('attachment');
         });
     }
 };

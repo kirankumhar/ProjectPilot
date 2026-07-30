@@ -37,7 +37,7 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'Alexy Torenov',
                 'password' => Hash::make('password'),
-                'role' => 'user',
+                'role' => 'backend_dev',
             ]
         );
 
@@ -46,7 +46,7 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'Julia Venchees',
                 'password' => Hash::make('password'),
-                'role' => 'user',
+                'role' => 'frontend_dev',
             ]
         );
 
@@ -55,7 +55,7 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'John Doenson',
                 'password' => Hash::make('password'),
-                'role' => 'user',
+                'role' => 'developer',
             ]
         );
 

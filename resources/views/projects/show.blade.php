@@ -51,7 +51,7 @@
                                             <img src="{{ asset('assets/img/users/user_' . (($loop->index % 8) + 1) . '.jpg') }}" alt="{{ $member->name }}">
                                             <div class="user__name">
                                                 <strong>{{ $member->name }}</strong><br>
-                                                <small class="text-muted">{{ $member->role ?? 'Member' }}</small>
+                                                <small class="text-muted">{{ $member->role_display }}</small>
                                             </div>
                                         </div>
                                     @empty
@@ -143,6 +143,11 @@
                                                 </a>
                                                 @if($task->description)
                                                     <div class="small text-muted">{{ Str::limit($task->description, 40) }}</div>
+                                                @endif
+                                                @if($task->attachment)
+                                                    <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mt-1" title="{{ $task->attachment_name }}">
+                                                        <i class="fa fa-paperclip margin-right-5"></i> File
+                                                    </a>
                                                 @endif
                                             </td>
                                             <td>

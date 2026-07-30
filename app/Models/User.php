@@ -48,6 +48,44 @@ class User extends Authenticatable
         ];
     }
 
+    public const ROLES = [
+        'admin' => 'Admin',
+        'manager' => 'Manager',
+        'developer' => 'Developer',
+        'backend_dev' => 'Backend Developer',
+        'frontend_dev' => 'Frontend Developer',
+    ];
+
+    public function getRoleDisplayAttribute(): string
+    {
+        return self::ROLES[$this->role] ?? ucwords(str_replace('_', ' ', $this->role ?? 'Developer'));
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+
+    public function isDeveloper(): bool
+    {
+        return in_array($this->role, ['developer', 'backend_dev', 'frontend_dev']);
+    }
+
+    public function isBackendDev(): bool
+    {
+        return $this->role === 'backend_dev';
+    }
+
+    public function isFrontendDev(): bool
+    {
+        return $this->role === 'frontend_dev';
+    }
+
     public function projects()
     {
         return $this->hasMany(Project::class, 'user_id');
@@ -61,5 +99,15 @@ class User extends Authenticatable
     public function memberProjects()
     {
         return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id')->withTimestamps();
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }

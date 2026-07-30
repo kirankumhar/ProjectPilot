@@ -18,7 +18,7 @@
             <div class="col-12 col-lg-8">
                 <div class="card margin-bottom-20">
                     <div class="card-body">
-                        <form action="{{ route('tasks.store') }}" method="POST">
+                        <form action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group margin-bottom-20">
@@ -59,7 +59,7 @@
                                         <option value="">Select User</option>
                                         @foreach($users as $u)
                                             <option value="{{ $u->id }}" {{ old('assigned_to', auth()->id()) == $u->id ? 'selected' : '' }}>
-                                                {{ $u->name }} ({{ $u->role ?? 'Member' }})
+                                                {{ $u->name }} ({{ $u->role_display }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -111,6 +111,13 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                            <div class="form-group margin-bottom-20">
+                                <label for="attachment" class="font-weight-bold">Attach File (Optional)</label>
+                                <input type="file" name="attachment" id="attachment" class="form-control-file @error('attachment') is-invalid @enderror">
+                                <small class="form-text text-muted">Allowed files: Images, PDF, DOCX, ZIP, TXT (Max size: 10MB)</small>
+                                @error('attachment')
+                                    <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top">

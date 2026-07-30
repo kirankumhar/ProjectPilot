@@ -18,6 +18,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'role' => ['nullable', 'string', 'in:developer,backend_dev,frontend_dev,manager,admin'],
             'email' => [
                 'required',
                 'string',

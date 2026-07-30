@@ -92,7 +92,7 @@
                                                     <input type="checkbox" name="members[]" value="{{ $user->id }}" id="user_{{ $user->id }}" class="custom-control-input" {{ (is_array(old('members')) && in_array($user->id, old('members'))) || $user->id === auth()->id() ? 'checked' : '' }}>
                                                     <label class="custom-control-label" for="user_{{ $user->id }}">
                                                         <strong>{{ $user->name }}</strong>
-                                                        <small class="text-muted d-block">{{ $user->role ?? 'Member' }}</small>
+                                                        <small class="text-muted d-block">{{ $user->role_display }}</small>
                                                     </label>
                                                 </div>
                                             </div>

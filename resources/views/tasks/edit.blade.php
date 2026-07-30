@@ -18,7 +18,7 @@
             <div class="col-12 col-lg-8">
                 <div class="card margin-bottom-20">
                     <div class="card-body">
-                        <form action="{{ route('tasks.update', $task) }}" method="POST">
+                        <form action="{{ route('tasks.update', $task) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
@@ -58,7 +58,7 @@
                                     <select name="assigned_to" id="assigned_to" class="form-control @error('assigned_to') is-invalid @enderror" required>
                                         @foreach($users as $u)
                                             <option value="{{ $u->id }}" {{ old('assigned_to', $task->assigned_to) == $u->id ? 'selected' : '' }}>
-                                                {{ $u->name }} ({{ $u->role ?? 'Member' }})
+                                                {{ $u->name }} ({{ $u->role_display }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -110,6 +110,24 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                            <div class="form-group margin-bottom-20">
+                                <label for="attachment" class="font-weight-bold">Attachment File</label>
+                                @if($task->attachment)
+                                    <div class="mb-2 p-2 bg-light border rounded d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <i class="fa fa-paperclip text-primary margin-right-5"></i>
+                                            <strong>Current File:</strong> {{ $task->attachment_name }}
+                                        </div>
+                                        <a href="{{ $task->attachment_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="fa fa-download margin-right-5"></i> View / Download
+                                        </a>
+                                    </div>
+                                @endif
+                                <input type="file" name="attachment" id="attachment" class="form-control-file @error('attachment') is-invalid @enderror">
+                                <small class="form-text text-muted">Upload new file to replace existing attachment (Max: 10MB)</small>
+                                @error('attachment')
+                                    <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
