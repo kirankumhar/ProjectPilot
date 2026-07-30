@@ -105,4 +105,31 @@ class ChatController extends Controller
             'html' => view('chat.partials.messages_feed', compact('messages'))->render()
         ]);
     }
+
+    /**
+     * Delete a chat message.
+     */
+    public function destroy(Message $message)
+    {
+        $currentUser = Auth::user();
+
+        if ($message->sender_id !== $currentUser->id && !$currentUser->isAdmin()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized to delete this message.'
+            ], 403);
+        }
+
+        $messageId = $message->id;
+        $message->delete();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message_id' => $messageId,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Message deleted.');
+    }
 }

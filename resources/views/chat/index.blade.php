@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="user user--bordered user--xlg margin-bottom-15">
-                                    <img src="{{ asset('assets/img/users/user_' . ((auth()->id() % 8) + 1) . '.jpg') }}" alt="{{ auth()->user()->name }}">
+                                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" style="object-fit: cover; width: 60px; height: 60px; border-radius: 50%;">
                                     <div class="user__name">
                                         <strong>{{ auth()->user()->name }}</strong><br>
                                         <span class="badge badge-primary margin-top-5">{{ auth()->user()->role_display }}</span>
@@ -39,12 +39,11 @@
                             @forelse($users as $u)
                                 @php
                                     $isActive = $activeUser && $activeUser->id === $u->id;
-                                    $uAvatar = (($u->id % 8) + 1);
                                 @endphp
                                 <a href="{{ route('chat.index', ['user_id' => $u->id]) }}" class="list-group-item list-group-item-action {{ $isActive ? 'active bg-light border-left border-primary' : '' }} p-3">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="user user--bordered user--lg m-0">
-                                            <img src="{{ asset('assets/img/users/user_' . $uAvatar . '.jpg') }}" alt="{{ $u->name }}">
+                                            <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" style="object-fit: cover; width: 45px; height: 45px; border-radius: 50%;">
                                             <div class="user__name">
                                                 <strong class="{{ $isActive ? 'text-primary' : 'text-dark' }}">{{ $u->name }}</strong><br>
                                                 <small class="text-muted">{{ $u->role_display }}</small>
@@ -70,7 +69,7 @@
                         <!-- ACTIVE CHAT HEADER -->
                         <div class="card-header d-flex align-items-center justify-content-between bg-white border-bottom py-3">
                             <div class="user user--bordered user--lg m-0">
-                                <img src="{{ asset('assets/img/users/user_' . (($activeUser->id % 8) + 1) . '.jpg') }}" alt="{{ $activeUser->name }}">
+                                <img src="{{ $activeUser->avatar_url }}" alt="{{ $activeUser->name }}" style="object-fit: cover; width: 45px; height: 45px; border-radius: 50%;">
                                 <div class="user__name">
                                     <h5 class="mb-0 text-bold">{{ $activeUser->name }}</h5>
                                     <span class="text-muted text-sm">{{ $activeUser->email }} &bull; <strong class="text-info">{{ $activeUser->role_display }}</strong></span>
@@ -117,6 +116,40 @@
 
     @if($activeUser)
     <script>
+        // Global Message Deletion Handler
+        window.deleteChatMessage = function(messageId) {
+            if (!confirm("Are you sure you want to delete this message?")) {
+                return;
+            }
+
+            fetch(`/chat/${messageId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const msgElem = document.getElementById(`msg-${messageId}`);
+                    if (msgElem) {
+                        msgElem.style.transition = "all 0.3s ease";
+                        msgElem.style.opacity = "0";
+                        msgElem.style.transform = "scale(0.9)";
+                        setTimeout(() => msgElem.remove(), 300);
+                    }
+                } else {
+                    alert(data.message || "Failed to delete message.");
+                }
+            })
+            .catch(err => {
+                console.error("Delete Error:", err);
+                alert("Error deleting message.");
+            });
+        };
+
         document.addEventListener("DOMContentLoaded", function () {
             const chatContainer = document.getElementById('chat-messages-container');
             const chatFeed = document.getElementById('chat-messages-feed');

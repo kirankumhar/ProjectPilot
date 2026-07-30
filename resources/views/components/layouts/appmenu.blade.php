@@ -2,7 +2,7 @@
     <div class="scroll" style="max-height: 100%">
         <div class="navigation" id="navigation-default">
             <div class="user user--bordered user--lg user--w-lineunder user--controls">
-                <img src="{{ asset('assets/img/users/user_1.jpg') }}" alt="User Profile">
+                <img src="{{ auth()->user() ? auth()->user()->avatar_url : asset('assets/img/users/user_1.jpg') }}" alt="User Profile" style="object-fit: cover; width: 60px; height: 60px; border-radius: 50%;">
                 <div class="user__name">
                     <strong>{{ auth()->user()->name ?? 'User' }}</strong><br>
                     <span class="text-muted text-uppercase">{{ auth()->user()->role_display ?? 'Developer' }}</span>

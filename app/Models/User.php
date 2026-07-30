@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'avatar',
     ];
 
     /**
@@ -59,6 +60,16 @@ class User extends Authenticatable
     public function getRoleDisplayAttribute(): string
     {
         return self::ROLES[$this->role] ?? ucwords(str_replace('_', ' ', $this->role ?? 'Developer'));
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        $fallbackIndex = (($this->id % 8) + 1);
+        return asset('assets/img/users/user_' . $fallbackIndex . '.jpg');
     }
 
     public function isAdmin(): bool

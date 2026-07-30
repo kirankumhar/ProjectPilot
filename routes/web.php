@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
     Route::get('/chat/fetch/{user}', [ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::delete('/chat/{message}', [ChatController::class, 'destroy'])->name('chat.destroy');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
