@@ -73,46 +73,57 @@
             <x-layouts.appmenu />
 
             <!-- MAIN CONTENT CONTAINER -->
-            <div class="content" id="content">
-                @if (session('success'))
-                    <div class="container-fluid padding-top-15">
-                        <div class="alert alert-success alert-dismissible fade show margin-bottom-10" role="alert">
-                            <strong><i class="fa fa-check-circle margin-right-5"></i> Success!</strong> {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+            <div class="content d-flex flex-column" id="content" style="min-height: calc(100vh - 65px);">
+                <div class="flex-grow-1">
+                    @if (session('success'))
+                        <div class="container-fluid padding-top-15">
+                            <div class="alert alert-success alert-dismissible fade show margin-bottom-10" role="alert">
+                                <strong><i class="fa fa-check-circle margin-right-5"></i> Success!</strong> {{ session('success') }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                @if (session('error'))
-                    <div class="container-fluid padding-top-15">
-                        <div class="alert alert-danger alert-dismissible fade show margin-bottom-10" role="alert">
-                            <strong><i class="fa fa-exclamation-circle margin-right-5"></i> Error!</strong> {{ session('error') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    @if (session('error'))
+                        <div class="container-fluid padding-top-15">
+                            <div class="alert alert-danger alert-dismissible fade show margin-bottom-10" role="alert">
+                                <strong><i class="fa fa-exclamation-circle margin-right-5"></i> Error!</strong> {{ session('error') }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                @if (isset($errors) && $errors->any())
-                    <div class="container-fluid padding-top-15">
-                        <div class="alert alert-danger alert-dismissible fade show margin-bottom-10" role="alert">
-                            <strong><i class="fa fa-exclamation-circle margin-right-5"></i> Please fix the errors below:</strong>
-                            <ul class="margin-bottom-0 margin-top-5 padding-left-20">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    @if (isset($errors) && $errors->any())
+                        <div class="container-fluid padding-top-15">
+                            <div class="alert alert-danger alert-dismissible fade show margin-bottom-10" role="alert">
+                                <strong><i class="fa fa-exclamation-circle margin-right-5"></i> Please fix the errors below:</strong>
+                                <ul class="margin-bottom-0 margin-top-5 padding-left-20">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                {{ $slot }}
+                    {{ $slot }}
+                </div>
+
+                <!-- PAGE FOOTER -->
+                <footer class="footer bg-white border-top py-3 mt-auto">
+                    <div class="container-fluid text-center">
+                        <span class="text-muted small" style="font-size: 0.9rem;">
+                            &copy; {{ date('Y') }} <strong>ProjectPilot</strong> &bull; Developed by <strong class="text-primary">Kiran</strong>
+                        </span>
+                    </div>
+                </footer>
             </div>
         </div>
     </div>

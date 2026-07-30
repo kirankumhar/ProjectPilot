@@ -12,7 +12,7 @@ class ProjectSeeder extends Seeder
     {
         // Admin Account
         User::firstOrCreate(
-            ['email' => 'admin@projectpilot.com'],
+            ['email' => 'admin@computered.co.in'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
@@ -22,7 +22,7 @@ class ProjectSeeder extends Seeder
 
         // Manager Account
         User::firstOrCreate(
-            ['email' => 'manager@projectpilot.com'],
+            ['email' => 'manager@computered.co.in'],
             [
                 'name' => 'Manager User',
                 'password' => Hash::make('password'),
