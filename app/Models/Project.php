@@ -8,13 +8,40 @@ class Project extends Model
 {
     protected $fillable = [
         'name',
+        'type',
         'description',
+        'url',
         'start_date',
         'due_date',
         'user_id',
         'status',
         'priority',
     ];
+
+    public const TYPES = [
+        'new_development' => 'New Project',
+        'maintenance' => 'Maintenance Project',
+    ];
+
+    public function getTypeDisplayAttribute(): string
+    {
+        return self::TYPES[$this->type] ?? ucwords(str_replace('_', ' ', $this->type ?? 'new_development'));
+    }
+
+    public function getTypeBadgeClassAttribute(): string
+    {
+        return $this->type === 'maintenance' ? 'badge-warning' : 'badge-info';
+    }
+
+    public function isMaintenance(): bool
+    {
+        return $this->type === 'maintenance';
+    }
+
+    public function isNewDevelopment(): bool
+    {
+        return $this->type === 'new_development' || empty($this->type);
+    }
 
     public function tasks()
     {

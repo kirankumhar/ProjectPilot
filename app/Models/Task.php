@@ -8,6 +8,7 @@ class Task extends Model
 {
     protected $fillable = [
         'title',
+        'type',
         'description',
         'status',
         'priority',
@@ -17,6 +18,30 @@ class Task extends Model
         'assigned_to',
         'attachment',
     ];
+
+    public const TYPES = [
+        'feature' => 'Feature',
+        'bug_fix' => 'Bug Fix',
+        'maintenance' => 'Maintenance',
+        'support' => 'Support Ticket',
+        'cr' => 'Change Request',
+    ];
+
+    public function getTypeDisplayAttribute(): string
+    {
+        return self::TYPES[$this->type] ?? ucwords(str_replace('_', ' ', $this->type ?? 'feature'));
+    }
+
+    public function getTypeBadgeClassAttribute(): string
+    {
+        return match ($this->type) {
+            'bug_fix' => 'badge-danger',
+            'maintenance' => 'badge-warning',
+            'support' => 'badge-info',
+            'cr' => 'badge-secondary',
+            default => 'badge-primary',
+        };
+    }
 
     public function getAttachmentUrlAttribute()
     {

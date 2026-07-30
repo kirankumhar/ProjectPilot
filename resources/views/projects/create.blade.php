@@ -29,6 +29,34 @@
                                 @enderror
                             </div>
 
+                            <!-- PROJECT TYPE SELECTION -->
+                            <div class="form-group margin-bottom-20">
+                                <label for="type" class="font-weight-bold">Project Category / Type <span class="text-danger">*</span></label>
+                                <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
+                                    <option value="new_development" {{ old('type', 'new_development') == 'new_development' ? 'selected' : '' }}>🚀 New Development (Fresh Project)</option>
+                                    <option value="maintenance" {{ old('type') == 'maintenance' ? 'selected' : '' }}>🔧 Maintenance Project (Ongoing Support / Live App)</option>
+                                </select>
+                                <small class="text-muted d-block mt-1">Select whether this is a brand new build or ongoing maintenance/support for an existing live app.</small>
+                                @error('type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- PROJECT URL FIELD -->
+                            <div class="form-group margin-bottom-20">
+                                <label for="url" class="font-weight-bold">Project URL / Live Demo Link (Optional)</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-globe"></i></span>
+                                    </div>
+                                    <input type="url" name="url" id="url" class="form-control @error('url') is-invalid @enderror" placeholder="https://example.com or https://github.com/org/repo" value="{{ old('url') }}">
+                                </div>
+                                <small class="text-muted d-block mt-1">Provide live website URL, staging link, or repository link.</small>
+                                @error('url')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <div class="form-group margin-bottom-20">
                                 <label for="description" class="font-weight-bold">Project Description</label>
                                 <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror" placeholder="Describe the objectives, scope, and deliverables...">{{ old('description') }}</textarea>

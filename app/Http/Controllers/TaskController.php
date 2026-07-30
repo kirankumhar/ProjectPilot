@@ -6,7 +6,6 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
@@ -17,6 +16,10 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $query = Task::with(['project', 'assignee']);
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -68,6 +71,7 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|in:feature,bug_fix,maintenance,support,cr',
             'description' => 'nullable|string',
             'status' => 'required|in:pending,in_progress,completed',
             'priority' => 'required|in:low,medium,high',
@@ -119,6 +123,7 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|in:feature,bug_fix,maintenance,support,cr',
             'description' => 'nullable|string',
             'status' => 'required|in:pending,in_progress,completed',
             'priority' => 'required|in:low,medium,high',

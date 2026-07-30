@@ -6,6 +6,11 @@
             <p class="caption">Project ID: #PRJ-{{ str_pad($project->id, 4, '0', STR_PAD_LEFT) }}</p>
         </div>
         <div class="page-heading__container float-right d-none d-sm-block">
+            @if($project->url)
+                <a href="{{ $project->url }}" target="_blank" class="btn btn-info margin-right-5" title="Visit Project URL">
+                    <i class="fa fa-external-link margin-right-5"></i> Visit Link
+                </a>
+            @endif
             <a href="{{ route('projects.edit', $project) }}" class="btn btn-outline-secondary margin-right-5">
                 <i class="fa fa-pencil margin-right-5"></i> Edit Project
             </a>
@@ -67,6 +72,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6 col-md-3 margin-bottom-10">
+                                <strong>Category / Type</strong><br>
+                                <span class="badge {{ $project->type_badge_class }}">
+                                    <i class="fa {{ $project->isMaintenance() ? 'fa-wrench' : 'fa-rocket' }} margin-right-5"></i>{{ $project->type_display }}
+                                </span>
+                            </div>
+                            <div class="col-6 col-md-3 margin-bottom-10">
                                 <strong>Status</strong><br>
                                 @if($project->status === 'in_progress')
                                     <span class="badge badge-primary">In Progress</span>
@@ -89,13 +100,17 @@
                                 @endif
                             </div>
                             <div class="col-6 col-md-3 margin-bottom-10">
-                                <strong>Start Date</strong><br>
-                                {{ $project->start_date ? \Carbon\Carbon::parse($project->start_date)->format('d M Y') : 'N/A' }}
-                            </div>
-                            <div class="col-6 col-md-3 margin-bottom-10">
                                 <strong>Due Date</strong><br>
                                 {{ $project->due_date ? \Carbon\Carbon::parse($project->due_date)->format('d M Y') : 'N/A' }}
                             </div>
+                            @if($project->url)
+                                <div class="col-12 margin-top-10">
+                                    <strong>Project Link / URL:</strong>
+                                    <a href="{{ $project->url }}" target="_blank" class="text-primary font-weight-bold ml-1">
+                                        {{ $project->url }} <i class="fa fa-external-link ml-1"></i>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

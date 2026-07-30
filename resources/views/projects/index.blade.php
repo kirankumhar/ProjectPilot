@@ -2,7 +2,7 @@
     <div class="page-heading">
         <div class="page-heading__container">
             <h1 class="title">Projects Overview</h1>
-            <p class="caption">Manage, track, and collaborate on software & business projects</p>
+            <p class="caption">Manage, track, and collaborate on New Development & Maintenance Projects</p>
         </div>
         <div class="page-heading__container float-right">
             <a href="{{ route('projects.create') }}" class="btn btn-primary">
@@ -12,10 +12,30 @@
     </div>
 
     <div class="container-fluid">
+        <!-- PROJECT TYPE TABS -->
+        <div class="nav nav-pills nav-fill mb-3 bg-white p-2 rounded border shadow-xs">
+            <a class="nav-item nav-link {{ empty(request('type')) ? 'active bg-primary text-white font-weight-bold' : 'text-dark' }}" href="{{ route('projects.index', array_merge(request()->except('type'), [])) }}">
+                <i class="fa fa-th-large margin-right-5"></i> All Projects
+                <span class="badge badge-light ml-1">{{ $stats['total'] ?? 0 }}</span>
+            </a>
+            <a class="nav-item nav-link {{ request('type') === 'new_development' ? 'active bg-primary text-white font-weight-bold' : 'text-dark' }}" href="{{ route('projects.index', array_merge(request()->except('type'), ['type' => 'new_development'])) }}">
+                <i class="fa fa-rocket text-success margin-right-5"></i> New Development Projects
+                <span class="badge badge-light ml-1">{{ $stats['new_dev'] ?? 0 }}</span>
+            </a>
+            <a class="nav-item nav-link {{ request('type') === 'maintenance' ? 'active bg-primary text-white font-weight-bold' : 'text-dark' }}" href="{{ route('projects.index', array_merge(request()->except('type'), ['type' => 'maintenance'])) }}">
+                <i class="fa fa-wrench text-warning margin-right-5"></i> Maintenance Projects
+                <span class="badge badge-light ml-1">{{ $stats['maintenance'] ?? 0 }}</span>
+            </a>
+        </div>
+
         <!-- FILTER BAR -->
         <div class="card margin-bottom-20">
             <div class="card-body">
                 <form action="{{ route('projects.index') }}" method="GET" class="form-row align-items-center">
+                    @if(request('type'))
+                        <input type="hidden" name="type" value="{{ request('type') }}">
+                    @endif
+
                     <div class="col-12 col-md-4 margin-bottom-10">
                         <input type="text" name="search" class="form-control" placeholder="Search project name or description..." value="{{ request('search') }}">
                     </div>
@@ -53,6 +73,10 @@
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start margin-bottom-10">
                                 <div>
+                                    <span class="badge {{ $project->type_badge_class }} margin-right-5">
+                                        <i class="fa {{ $project->isMaintenance() ? 'fa-wrench' : 'fa-rocket' }} margin-right-5"></i>{{ $project->type_display }}
+                                    </span>
+
                                     @if($project->status === 'in_progress')
                                         <span class="badge badge-primary">In Progress</span>
                                     @elseif($project->status === 'completed')
@@ -94,10 +118,15 @@
                                 </div>
                             </div>
 
-                            <h4 class="card-title margin-bottom-10">
+                            <h4 class="card-title margin-bottom-10 d-flex align-items-center justify-content-between">
                                 <a href="{{ route('projects.show', $project) }}" class="text-dark">
                                     {{ $project->name }}
                                 </a>
+                                @if($project->url)
+                                    <a href="{{ $project->url }}" target="_blank" class="text-info ml-2" title="Visit Live URL: {{ $project->url }}">
+                                        <i class="fa fa-external-link"></i>
+                                    </a>
+                                @endif
                             </h4>
 
                             <p class="text-muted flex-grow-1 small margin-bottom-15">

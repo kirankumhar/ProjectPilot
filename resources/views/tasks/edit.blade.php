@@ -30,6 +30,21 @@
                                 @enderror
                             </div>
 
+                            <!-- TASK TYPE SELECTION -->
+                            <div class="form-group margin-bottom-20">
+                                <label for="type" class="font-weight-bold">Task Category / Type <span class="text-danger">*</span></label>
+                                <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
+                                    <option value="feature" {{ old('type', $task->type) == 'feature' ? 'selected' : '' }}>✨ Feature (New Functionality)</option>
+                                    <option value="bug_fix" {{ old('type', $task->type) == 'bug_fix' ? 'selected' : '' }}>🐛 Bug Fix (Defect / Issue)</option>
+                                    <option value="maintenance" {{ old('type', $task->type) == 'maintenance' ? 'selected' : '' }}>🔧 Maintenance (Refactoring, Updates, Server)</option>
+                                    <option value="support" {{ old('type', $task->type) == 'support' ? 'selected' : '' }}>🎧 Support Ticket (User Help / Inquiries)</option>
+                                    <option value="cr" {{ old('type', $task->type) == 'cr' ? 'selected' : '' }}>📝 Change Request (CR / Scope Modification)</option>
+                                </select>
+                                @error('type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <div class="form-group margin-bottom-20">
                                 <label for="description" class="font-weight-bold">Description</label>
                                 <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror">{{ old('description', $task->description) }}</textarea>
@@ -44,7 +59,7 @@
                                     <select name="project_id" id="project_id" class="form-control @error('project_id') is-invalid @enderror" required>
                                         @foreach($projects as $p)
                                             <option value="{{ $p->id }}" {{ old('project_id', $task->project_id) == $p->id ? 'selected' : '' }}>
-                                                {{ $p->name }}
+                                                {{ $p->name }} ({{ $p->type_display }})
                                             </option>
                                         @endforeach
                                     </select>
@@ -110,6 +125,8 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                            </div>
+
                             <div class="form-group margin-bottom-20">
                                 <label for="attachment" class="font-weight-bold">Attachment File</label>
                                 @if($task->attachment)

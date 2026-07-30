@@ -16,6 +16,10 @@ class ProjectController extends Controller
     {
         $query = Project::with(['owner', 'tasks', 'members']);
 
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -34,7 +38,13 @@ class ProjectController extends Controller
 
         $projects = $query->latest()->paginate(9)->withQueryString();
 
-        return view('projects.index', compact('projects'));
+        $stats = [
+            'total' => Project::count(),
+            'new_dev' => Project::where('type', 'new_development')->count(),
+            'maintenance' => Project::where('type', 'maintenance')->count(),
+        ];
+
+        return view('projects.index', compact('projects', 'stats'));
     }
 
     /**
@@ -53,6 +63,8 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'type' => 'required|in:new_development,maintenance',
+            'url' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:pending,in_progress,completed,on_hold',
             'priority' => 'required|in:low,medium,high',
@@ -85,7 +97,15 @@ class ProjectController extends Controller
         $project->load(['owner', 'members', 'tasks.assignee']);
         $allUsers = User::orderBy('name')->get();
 
-        return view('projects.show', compact('project', 'allUsers'));
+        $taskTypesCount = [
+            'feature' => $project->tasks->where('type', 'feature')->count(),
+            'bug_fix' => $project->tasks->where('type', 'bug_fix')->count(),
+            'maintenance' => $project->tasks->where('type', 'maintenance')->count(),
+            'support' => $project->tasks->where('type', 'support')->count(),
+            'cr' => $project->tasks->where('type', 'cr')->count(),
+        ];
+
+        return view('projects.show', compact('project', 'allUsers', 'taskTypesCount'));
     }
 
     /**
@@ -106,6 +126,8 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'type' => 'required|in:new_development,maintenance',
+            'url' => 'nullable|url|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:pending,in_progress,completed,on_hold',
             'priority' => 'required|in:low,medium,high',
