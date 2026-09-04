@@ -17,7 +17,15 @@ class Task extends Model
         'project_id',
         'assigned_to',
         'attachment',
+        'estimated_hours',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'estimated_hours' => 'float',
+        ];
+    }
 
     public const TYPES = [
         'feature' => 'Feature',
@@ -66,6 +74,36 @@ class Task extends Model
     public function comments()
     {
         return $this->hasMany(TaskComment::class)->orderBy('created_at', 'asc');
+    }
+
+    public function timeLogs()
+    {
+        return $this->hasMany(TaskTimeLog::class)->orderBy('logged_date', 'desc')->orderBy('created_at', 'desc');
+    }
+
+    public function getTotalLoggedHoursAttribute(): float
+    {
+        if ($this->relationLoaded('timeLogs')) {
+            return (float) round($this->timeLogs->sum('hours'), 2);
+        }
+
+        return (float) round($this->timeLogs()->sum('hours'), 2);
+    }
+
+    public function getTimeProgressPercentageAttribute(): int
+    {
+        $estimated = (float) $this->estimated_hours;
+        if ($estimated <= 0) {
+            return 0;
+        }
+
+        return (int) min(round(($this->total_logged_hours / $estimated) * 100), 100);
+    }
+
+    public function getIsOverBudgetAttribute(): bool
+    {
+        $estimated = (float) $this->estimated_hours;
+        return $estimated > 0 && $this->total_logged_hours > $estimated;
     }
 }
 

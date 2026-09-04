@@ -46,6 +46,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'readAndRedirect'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    // Interactive Calendar Routes
+    Route::get('/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar/events', [\App\Http\Controllers\CalendarController::class, 'events'])->name('calendar.events');
+
+    // Time Tracking & Work Logs Routes
+    Route::get('/timesheets', [\App\Http\Controllers\TimeLogController::class, 'index'])->name('timesheets.index');
+    Route::post('/tasks/{task}/time-logs', [\App\Http\Controllers\TimeLogController::class, 'store'])->name('tasks.time-logs.store');
+    Route::delete('/time-logs/{timeLog}', [\App\Http\Controllers\TimeLogController::class, 'destroy'])->name('tasks.time-logs.destroy');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

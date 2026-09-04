@@ -88,6 +88,7 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'required|exists:users,id',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,zip,rar,txt|max:10240',
+            'estimated_hours' => 'nullable|numeric|min:0|max:9999',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -121,6 +122,7 @@ class TaskController extends Controller
             'project',
             'assignee',
             'comments.user',
+            'timeLogs.user',
         ]);
 
         return view('tasks.show', compact('task'));
@@ -153,6 +155,7 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'required|exists:users,id',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx,zip,rar,txt|max:10240',
+            'estimated_hours' => 'nullable|numeric|min:0|max:9999',
         ]);
 
         if ($request->hasFile('attachment')) {

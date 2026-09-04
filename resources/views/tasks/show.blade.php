@@ -310,6 +310,121 @@
                         </ul>
                     </div>
                 </div>
+
+                <!-- TIME TRACKING & WORK LOGS CARD -->
+                <div class="card margin-bottom-20 shadow-sm border" id="time-tracking-card">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <div class="font-weight-bold">
+                            <i class="fa fa-clock-o text-primary mr-1"></i> Time Tracking
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#logTimeModal">
+                            <i class="fa fa-plus mr-1"></i> Log Time
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- PROGRESS BAR -->
+                        <div class="d-flex justify-content-between align-items-center mb-1 small">
+                            <span>Logged: <strong class="{{ $task->is_over_budget ? 'text-danger' : 'text-primary' }}">{{ $task->total_logged_hours }} hrs</strong></span>
+                            <span>Estimate: <strong>{{ $task->estimated_hours > 0 ? $task->estimated_hours . ' hrs' : 'Not set' }}</strong></span>
+                        </div>
+
+                        @if($task->estimated_hours > 0)
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div class="progress-bar {{ $task->is_over_budget ? 'bg-danger' : 'bg-primary' }}" 
+                                     role="progressbar" 
+                                     style="width: {{ $task->time_progress_percentage }}%"></div>
+                            </div>
+                            @if($task->is_over_budget)
+                                <div class="text-danger small font-weight-bold mb-3">
+                                    <i class="fa fa-exclamation-triangle mr-1"></i> Over budget by {{ round($task->total_logged_hours - $task->estimated_hours, 2) }} hrs
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-muted small font-italic mb-3">No hour estimate set for this task.</div>
+                        @endif
+
+                        <!-- RECENT TIME LOGS LIST -->
+                        <div class="border-top pt-2">
+                            <h6 class="small font-weight-bold text-muted text-uppercase mb-2">Work Logs</h6>
+                            <ul class="list-group list-group-flush small">
+                                @forelse($task->timeLogs as $log)
+                                    <li class="list-group-item px-0 py-2">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong class="text-dark">{{ $log->hours }} hrs</strong>
+                                                <span class="text-muted">&bull; {{ $log->user->name ?? 'User' }}</span>
+                                                <div class="text-muted small">{{ \Carbon\Carbon::parse($log->logged_date)->format('M d, Y') }}</div>
+                                                @if($log->note)
+                                                    <div class="text-muted font-italic mt-1" style="font-size: 0.78rem;">"{{ $log->note }}"</div>
+                                                @endif
+                                            </div>
+                                            @if(auth()->id() === $log->user_id || (auth()->check() && auth()->user()->isAdmin()))
+                                                <form action="{{ route('tasks.time-logs.destroy', $log) }}" method="POST" onsubmit="return confirm('Delete this work log?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0 ml-2" title="Delete work log">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </li>
+                                @empty
+                                    <li class="list-group-item px-0 py-2 text-muted font-italic text-center">
+                                        No hours logged yet.
+                                    </li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOG TIME MODAL -->
+    <div class="modal fade" id="logTimeModal" tabindex="-1" role="dialog" aria-labelledby="logTimeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <form action="{{ route('tasks.time-logs.store', $task) }}" method="POST">
+                    @csrf
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title font-weight-bold text-dark" id="logTimeModalLabel">
+                            <i class="fa fa-clock-o text-primary mr-1"></i> Log Work Hours
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="form-group mb-3">
+                            <label for="modal-hours" class="font-weight-bold small">Time Spent (Hours) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" step="0.25" min="0.1" max="24" name="hours" id="modal-hours" class="form-control" placeholder="e.g. 2.5" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Hours</span>
+                                </div>
+                            </div>
+                            <small class="text-muted">Enter hours (e.g. 1.5 = 1 hour 30 mins)</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="modal-logged-date" class="font-weight-bold small">Date of Work <span class="text-danger">*</span></label>
+                            <input type="date" name="logged_date" id="modal-logged-date" class="form-control" value="{{ now()->format('Y-m-d') }}" required>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <label for="modal-note" class="font-weight-bold small">Work Description / Note (Optional)</label>
+                            <textarea name="note" id="modal-note" rows="3" class="form-control" placeholder="What did you work on?"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-white">
+                        <button type="button" class="btn btn-light btn-sm" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm px-4">
+                            <i class="fa fa-save mr-1"></i> Save Work Log
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

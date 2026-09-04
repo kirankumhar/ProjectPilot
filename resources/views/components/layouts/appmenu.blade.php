@@ -76,6 +76,20 @@
                     </ul>
                 </li>
 
+                <li class="{{ request()->routeIs('calendar.*') ? 'active' : '' }}">
+                    <a href="{{ route('calendar.index') }}">
+                        <span class="icon fa fa-calendar"></span> 
+                        <span class="text">Calendar</span>
+                    </a>
+                </li>
+
+                <li class="{{ request()->routeIs('timesheets.*') ? 'active' : '' }}">
+                    <a href="{{ route('timesheets.index') }}">
+                        <span class="icon fa fa-clock-o"></span> 
+                        <span class="text">Timesheets</span>
+                    </a>
+                </li>
+
                 <li class="{{ request()->routeIs('chat.*') ? 'active' : '' }}">
                     <a href="{{ route('chat.index') }}">
                         <span class="icon li-bubble"></span> 

@@ -118,7 +118,7 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-12 col-md-6 form-group margin-bottom-20">
+                                <div class="col-12 col-md-4 form-group margin-bottom-20">
                                     <label for="start_date" class="font-weight-bold">Start Date</label>
                                     <input type="date" name="start_date" id="start_date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date', $task->start_date) }}">
                                     @error('start_date')
@@ -126,10 +126,23 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-12 col-md-6 form-group margin-bottom-20">
+                                <div class="col-12 col-md-4 form-group margin-bottom-20">
                                     <label for="due_date" class="font-weight-bold">Due Date</label>
                                     <input type="date" name="due_date" id="due_date" class="form-control @error('due_date') is-invalid @enderror" value="{{ old('due_date', $task->due_date) }}">
                                     @error('due_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12 col-md-4 form-group margin-bottom-20">
+                                    <label for="estimated_hours" class="font-weight-bold">Estimated Hours</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.25" min="0" max="9999" name="estimated_hours" id="estimated_hours" class="form-control @error('estimated_hours') is-invalid @enderror" placeholder="e.g. 8.0" value="{{ old('estimated_hours', $task->estimated_hours) }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">hrs</span>
+                                        </div>
+                                    </div>
+                                    @error('estimated_hours')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
