@@ -96,8 +96,8 @@
                                     @endif
                                 </div>
                                 <div class="dropdown">
-                                    <button class="btn btn-light btn-sm btn-icon" data-toggle="dropdown">
-                                        <i class="fa fa-ellipsis-v"></i>
+                                    <button class="btn btn-light btn-sm btn-icon d-inline-flex align-items-center justify-content-center" data-toggle="dropdown" type="button" style="width: 32px; height: 32px; padding: 0; border-radius: 6px;" title="Options">
+                                        <i class="fa fa-ellipsis-v text-muted" style="float: none; margin: 0; line-height: 1; font-size: 14px;"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a href="{{ route('projects.show', $project) }}" class="dropdown-item">

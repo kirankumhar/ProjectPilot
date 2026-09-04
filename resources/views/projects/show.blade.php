@@ -132,9 +132,14 @@
                             <h4>Project Tasks ({{ $project->tasks->count() }})</h4>
                             <p class="subtitle margin-bottom-0">Milestones and work items for this project</p>
                         </div>
-                        <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-plus margin-right-5"></i> Add Task
-                        </a>
+                        <div>
+                            <a href="{{ route('tasks.index', ['project_id' => $project->id, 'view' => 'board']) }}" class="btn btn-sm btn-outline-primary margin-right-5">
+                                <i class="fa fa-th-large margin-right-5"></i> View Board
+                            </a>
+                            <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-plus margin-right-5"></i> Add Task
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body padding-top-0">
                         <div class="table-responsive">

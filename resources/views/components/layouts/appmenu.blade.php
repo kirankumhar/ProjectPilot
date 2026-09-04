@@ -59,7 +59,7 @@
                 
                 <li class="openable {{ request()->routeIs('tasks.*') ? 'open active' : '' }}">
                     <a href="#">
-                        <span class="icon li-clipboard"></span> 
+                        <span class="icon li-clipboard-check"></span> 
                         <span class="text">Tasks</span>
                     </a>
                     <ul>

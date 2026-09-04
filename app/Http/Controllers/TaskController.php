@@ -45,11 +45,19 @@ class TaskController extends Controller
             });
         }
 
-        $tasks = $query->latest()->paginate(12)->withQueryString();
+        $viewMode = $request->get('view', 'board');
+        
+        if ($viewMode === 'board') {
+            $tasks = (clone $query)->latest()->get();
+        } else {
+            $tasks = $query->latest()->paginate(12)->withQueryString();
+        }
+
+        $allTasksForBoard = (clone $query)->latest()->get();
         $projects = Project::orderBy('name')->get();
         $users = User::orderBy('name')->get();
 
-        return view('tasks.index', compact('tasks', 'projects', 'users'));
+        return view('tasks.index', compact('tasks', 'allTasksForBoard', 'projects', 'users', 'viewMode'));
     }
 
     /**
@@ -162,5 +170,30 @@ class TaskController extends Controller
 
         return redirect()->route('tasks.index')
             ->with('success', 'Task deleted successfully!');
+    }
+
+    /**
+     * Update task status via AJAX drag and drop.
+     */
+    public function updateStatus(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,in_progress,completed',
+        ]);
+
+        $task->update([
+            'status' => $validated['status'],
+        ]);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task status updated to ' . ucwords(str_replace('_', ' ', $task->status)),
+                'status' => $task->status,
+                'task_id' => $task->id,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Task status updated successfully!');
     }
 }
