@@ -57,6 +57,17 @@ class TaskChecklistController extends Controller
 
         $task = $checklist->task->fresh();
 
+        if ($newStatus) {
+            $userName = Auth::user()?->name ?? 'User';
+            \App\Models\ActivityLog::record(
+                $task->project_id,
+                'checklist_completed',
+                "{$userName} completed subtask '{$checklist->title}' on task '{$task->title}'",
+                $task->id,
+                ['checklist_id' => $checklist->id]
+            );
+        }
+
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,

@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
@@ -98,6 +99,15 @@ class TaskController extends Controller
         $task = Task::create($validated);
         $task->load('project');
 
+        $userName = Auth::user()?->name ?? 'User';
+        \App\Models\ActivityLog::record(
+            $task->project_id,
+            'task_created',
+            "{$userName} created task #TSK-{$task->id} ({$task->title})",
+            $task->id,
+            ['type' => $task->type, 'priority' => $task->priority]
+        );
+
         // Notify assigned user if different from creator
         if ($task->assigned_to && $task->assigned_to !== auth()->id()) {
             $assignee = User::find($task->assigned_to);
@@ -124,6 +134,7 @@ class TaskController extends Controller
             'comments.user',
             'timeLogs.user',
             'checklists.completedBy',
+            'activities.user',
         ]);
 
         return view('tasks.show', compact('task'));
@@ -167,13 +178,34 @@ class TaskController extends Controller
         }
 
         $previousAssigneeId = $task->assigned_to;
+        $oldStatus = $task->status;
         $task->update($validated);
         $task->load('project');
+
+        $userName = Auth::user()?->name ?? 'User';
+        if ($oldStatus !== $task->status) {
+            $formattedOld = ucwords(str_replace('_', ' ', $oldStatus));
+            $formattedNew = ucwords(str_replace('_', ' ', $task->status));
+            \App\Models\ActivityLog::record(
+                $task->project_id,
+                'task_status_changed',
+                "{$userName} changed status of task '{$task->title}' from {$formattedOld} to {$formattedNew}",
+                $task->id,
+                ['old_status' => $oldStatus, 'new_status' => $task->status]
+            );
+        }
 
         // If assignee changed and is not the current user, notify new assignee
         if ($task->assigned_to && $task->assigned_to !== $previousAssigneeId && $task->assigned_to !== auth()->id()) {
             $newAssignee = User::find($task->assigned_to);
             $newAssignee?->notify(new \App\Notifications\TaskAssignedNotification($task));
+
+            \App\Models\ActivityLog::record(
+                $task->project_id,
+                'task_reassigned',
+                "{$userName} assigned task '{$task->title}' to {$newAssignee?->name}",
+                $task->id
+            );
         }
 
         return redirect()->route('tasks.index')
@@ -206,10 +238,24 @@ class TaskController extends Controller
             'status' => 'required|in:pending,in_progress,completed',
         ]);
 
+        $oldStatus = $task->status;
         $task->update([
             'status' => $validated['status'],
         ]);
         $task->load(['project', 'assignee']);
+
+        if ($oldStatus !== $task->status) {
+            $userName = Auth::user()?->name ?? 'User';
+            $formattedOld = ucwords(str_replace('_', ' ', $oldStatus));
+            $formattedNew = ucwords(str_replace('_', ' ', $task->status));
+            \App\Models\ActivityLog::record(
+                $task->project_id,
+                'task_status_changed',
+                "{$userName} changed status of task '{$task->title}' from {$formattedOld} to {$formattedNew}",
+                $task->id,
+                ['old_status' => $oldStatus, 'new_status' => $task->status]
+            );
+        }
 
         // Notify assignee if not current user
         if ($task->assigned_to && $task->assigned_to !== auth()->id()) {

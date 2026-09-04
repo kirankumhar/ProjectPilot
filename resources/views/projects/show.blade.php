@@ -324,6 +324,54 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- PROJECT ACTIVITY HISTORY -->
+                <div class="card margin-bottom-20">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4>Activity History</h4>
+                            <p class="subtitle margin-bottom-0">Recent events on this project</p>
+                        </div>
+                        <span class="badge badge-pill badge-primary">{{ $project->activities->count() }}</span>
+                    </div>
+                    <div class="card-body padding-top-0">
+                        <ul class="list-group list-group-flush">
+                            @forelse($project->activities->take(8) as $activity)
+                                <li class="list-group-item px-0 py-2 border-bottom">
+                                    <div class="d-flex align-items-start">
+                                        <div class="margin-right-10 margin-top-5">
+                                            <span class="badge {{ $activity->action_badge_class }} p-2 rounded-circle" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="{{ $activity->action_icon }}" style="font-size: 0.8rem;"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="small font-weight-500 text-dark" style="line-height: 1.35;">
+                                                {{ $activity->description }}
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center margin-top-5">
+                                                <small class="text-muted">
+                                                    @if($activity->task)
+                                                        <a href="{{ route('tasks.show', $activity->task) }}" class="text-primary font-weight-bold">
+                                                            #TSK-{{ str_pad($activity->task->id, 4, '0', STR_PAD_LEFT) }}
+                                                        </a>
+                                                    @endif
+                                                </small>
+                                                <small class="text-muted" title="{{ $activity->created_at->format('M d, Y h:i A') }}">
+                                                    {{ $activity->created_at->diffForHumans() }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="list-group-item px-0 text-center text-muted py-3">
+                                    <i class="fa fa-history fa-2x text-muted opacity-50 mb-2"></i>
+                                    <p class="mb-0 small">No activity recorded for this project yet.</p>
+                                </li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

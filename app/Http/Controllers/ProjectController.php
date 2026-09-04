@@ -85,6 +85,13 @@ class ProjectController extends Controller
             $project->members()->sync([$validated['user_id']]);
         }
 
+        $userName = Auth::user()?->name ?? 'User';
+        \App\Models\ActivityLog::record(
+            $project->id,
+            'project_created',
+            "{$userName} created project {$project->name}"
+        );
+
         return redirect()->route('projects.index')
             ->with('success', 'Project created successfully!');
     }
@@ -94,7 +101,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['owner', 'members', 'tasks.assignee', 'tasks.comments']);
+        $project->load(['owner', 'members', 'tasks.assignee', 'tasks.comments', 'activities.user']);
         $allUsers = User::orderBy('name')->get();
 
         $taskTypesCount = [
@@ -137,7 +144,21 @@ class ProjectController extends Controller
             'members.*' => 'exists:users,id',
         ]);
 
+        $oldStatus = $project->status;
         $project->update($validated);
+
+        if ($oldStatus !== $project->status) {
+            $userName = Auth::user()?->name ?? 'User';
+            $formattedOld = ucwords(str_replace('_', ' ', $oldStatus));
+            $formattedNew = ucwords(str_replace('_', ' ', $project->status));
+            \App\Models\ActivityLog::record(
+                $project->id,
+                'project_updated',
+                "{$userName} changed project status from '{$formattedOld}' to '{$formattedNew}'",
+                null,
+                ['old_status' => $oldStatus, 'new_status' => $project->status]
+            );
+        }
 
         if (isset($validated['members'])) {
             $project->members()->sync($validated['members']);

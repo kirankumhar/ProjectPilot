@@ -76,4 +76,9 @@ class Project extends Model
         $completed = $this->tasks()->where('status', 'completed')->count();
         return (int) round(($completed / $total) * 100);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(ActivityLog::class)->orderBy('created_at', 'desc');
+    }
 }

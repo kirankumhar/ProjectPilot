@@ -33,6 +33,15 @@ class TaskCommentController extends Controller
 
         $comment->load(['task.project', 'user']);
 
+        $userName = Auth::user()?->name ?? 'User';
+        \App\Models\ActivityLog::record(
+            $task->project_id,
+            'comment_added',
+            "{$userName} commented on task '{$task->title}'",
+            $task->id,
+            ['comment_id' => $comment->id]
+        );
+
         // Notify task assignee if not the commenter
         if ($task->assigned_to && $task->assigned_to !== Auth::id()) {
             $task->assignee?->notify(new \App\Notifications\TaskCommentNotification($comment));

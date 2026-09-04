@@ -81,6 +81,15 @@ class TimeLogController extends Controller
             'note' => $validated['note'] ?? null,
         ]);
 
+        $userName = Auth::user()?->name ?? 'User';
+        \App\Models\ActivityLog::record(
+            $task->project_id,
+            'time_logged',
+            "{$userName} logged {$validated['hours']} hours on task '{$task->title}'",
+            $task->id,
+            ['hours' => $validated['hours'], 'date' => $validated['logged_date']]
+        );
+
         return redirect()->route('tasks.show', $task)
             ->with('success', "Logged {$validated['hours']} hours successfully!");
     }

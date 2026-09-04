@@ -30,6 +30,11 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
+        $recentActivities = \App\Models\ActivityLog::with(['user', 'project', 'task'])
+            ->latest()
+            ->take(8)
+            ->get();
+
         return view('dashboard.index', compact(
             'totalProjects',
             'activeProjects',
@@ -39,7 +44,8 @@ class DashboardController extends Controller
             'completedTasks',
             'totalMembers',
             'recentProjects',
-            'recentTasks'
+            'recentTasks',
+            'recentActivities'
         ));
     }
 }

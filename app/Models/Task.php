@@ -138,5 +138,10 @@ class Task extends Model
 
         return (int) round(($this->checklist_completed_count / $total) * 100);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(ActivityLog::class)->orderBy('created_at', 'desc');
+    }
 }
 

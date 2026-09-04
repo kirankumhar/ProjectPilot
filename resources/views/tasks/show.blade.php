@@ -471,6 +471,43 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- TASK ACTIVITY AUDIT HISTORY -->
+                <div class="card margin-bottom-20 shadow-sm border">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <div class="font-weight-bold">
+                            <i class="fa fa-history text-primary mr-1"></i> Activity History
+                        </div>
+                        <span class="badge badge-pill badge-primary">{{ $task->activities->count() }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush small">
+                            @forelse($task->activities->take(6) as $activity)
+                                <li class="list-group-item px-3 py-2 border-bottom">
+                                    <div class="d-flex align-items-start">
+                                        <div class="margin-right-10 margin-top-5">
+                                            <span class="badge {{ $activity->action_badge_class }} p-1 rounded-circle" style="width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center;">
+                                                <i class="{{ $activity->action_icon }}" style="font-size: 0.75rem;"></i>
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="font-weight-500 text-dark" style="line-height: 1.35;">
+                                                {{ $activity->description }}
+                                            </div>
+                                            <div class="text-muted mt-1" style="font-size: 0.75rem;" title="{{ $activity->created_at->format('M d, Y h:i A') }}">
+                                                {{ $activity->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="list-group-item text-center text-muted py-3">
+                                    No activity logs for this task yet.
+                                </li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
