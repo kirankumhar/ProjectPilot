@@ -55,6 +55,13 @@
             <a href="{{ route('tasks.show', $task) }}#comments-section" class="badge {{ ($task->comments_count ?? 0) > 0 ? 'badge-primary' : 'badge-light text-muted border' }}" title="{{ $task->comments_count ?? 0 }} comments">
                 <i class="fa fa-comments margin-right-5"></i>{{ $task->comments_count ?? 0 }}
             </a>
+
+            <!-- CHECKLIST BADGE -->
+            @if($task->checklist_total_count > 0)
+                <a href="{{ route('tasks.show', $task) }}#checklist-card" class="badge {{ $task->checklist_progress_percentage == 100 ? 'badge-success' : 'badge-light text-muted border' }}" title="Checklist: {{ $task->checklist_completed_count }}/{{ $task->checklist_total_count }} completed">
+                    <i class="fa fa-check-square-o margin-right-5"></i>{{ $task->checklist_completed_count }}/{{ $task->checklist_total_count }}
+                </a>
+            @endif
         </div>
 
         <div class="d-flex align-items-center">

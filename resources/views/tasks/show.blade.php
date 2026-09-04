@@ -93,6 +93,99 @@
                                 </a>
                             </div>
                         @endif
+                <!-- CHECKLIST & SUBTASKS SECTION -->
+                <div class="card margin-bottom-20 shadow-sm border" id="checklist-card">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-check-square-o text-success margin-right-10" style="font-size: 1.25rem;"></i>
+                            <h5 class="mb-0 font-weight-bold">Subtasks & Checklist</h5>
+                            <span class="badge badge-pill badge-info ml-2" id="checklist-counter-badge">
+                                {{ $task->checklist_completed_count }}/{{ $task->checklist_total_count }}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="text-muted small font-weight-bold mr-1" id="checklist-pct-label">{{ $task->checklist_progress_percentage }}% Completed</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- PROGRESS BAR -->
+                        <div class="progress mb-4" style="height: 8px; border-radius: 4px; background-color: #e9ecef;">
+                            <div class="progress-bar {{ $task->checklist_progress_percentage == 100 ? 'bg-success' : 'bg-primary' }}" 
+                                 id="checklist-progress-bar"
+                                 role="progressbar" 
+                                 style="width: {{ $task->checklist_progress_percentage }}%; transition: width 0.4s ease;" 
+                                 aria-valuenow="{{ $task->checklist_progress_percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+
+                        <!-- CHECKLIST ITEMS LIST -->
+                        <div id="checklist-items-container" class="margin-bottom-20">
+                            @forelse($task->checklists as $item)
+                                <div class="checklist-item d-flex align-items-center justify-content-between p-2 mb-2 rounded border bg-light {{ $item->is_completed ? 'item-completed' : '' }}" 
+                                     id="checklist-item-{{ $item->id }}"
+                                     data-id="{{ $item->id }}">
+                                    <div class="d-flex align-items-center flex-grow-1 mr-3">
+                                        <div class="custom-control custom-checkbox mr-3">
+                                            <input type="checkbox" 
+                                                   class="custom-control-input checklist-toggle" 
+                                                   id="chk-{{ $item->id }}" 
+                                                   data-id="{{ $item->id }}"
+                                                   {{ $item->is_completed ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="chk-{{ $item->id }}"></label>
+                                        </div>
+                                        <div>
+                                            <span class="checklist-title {{ $item->is_completed ? 'text-muted text-strikethrough' : 'text-dark font-weight-500' }}" 
+                                                  id="chk-title-{{ $item->id }}">
+                                                {{ $item->title }}
+                                            </span>
+                                            <div class="checklist-meta text-muted small" id="chk-meta-{{ $item->id }}">
+                                                @if($item->is_completed && $item->completedBy)
+                                                    <i class="fa fa-check text-success mr-1"></i> Completed by {{ $item->completedBy->name }} {{ $item->completed_at?->diffForHumans() }}
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-link text-danger p-1 delete-checklist-btn" 
+                                                data-id="{{ $item->id }}"
+                                                title="Delete Subtask">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @empty
+                                <div id="checklist-empty-state" class="text-center py-3 text-muted">
+                                    <i class="fa fa-tasks fa-2x mb-2 text-muted opacity-50"></i>
+                                    <p class="mb-0 small">No subtasks yet. Break down this task into smaller steps below.</p>
+                                </div>
+                            @endforelse
+                        </div>
+
+                        <!-- ADD CHECKLIST ITEM FORM -->
+                        <form id="add-checklist-form" action="{{ route('tasks.checklists.store', $task) }}" method="POST">
+                            @csrf
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white border-right-0"><i class="fa fa-plus text-primary"></i></span>
+                                </div>
+                                <input type="text" 
+                                       name="title" 
+                                       id="new-checklist-input" 
+                                       class="form-control border-left-0" 
+                                       placeholder="Add a new subtask or checklist item..." 
+                                       required 
+                                       maxlength="255">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary px-3" id="add-checklist-btn">
+                                        Add Subtask
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -428,4 +521,210 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .text-strikethrough {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .checklist-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .checklist-item:hover {
+            background-color: #f1f5f9 !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const csrfToken = '{{ csrf_token() }}';
+
+            function updateProgressUI(stats) {
+                if (!stats) return;
+                const pct = stats.percentage || 0;
+                const total = stats.total || 0;
+                const completed = stats.completed || 0;
+
+                const progressBar = document.getElementById('checklist-progress-bar');
+                const counterBadge = document.getElementById('checklist-counter-badge');
+                const pctLabel = document.getElementById('checklist-pct-label');
+
+                if (progressBar) {
+                    progressBar.style.width = pct + '%';
+                    progressBar.setAttribute('aria-valuenow', pct);
+                    if (pct === 100) {
+                        progressBar.classList.remove('bg-primary');
+                        progressBar.classList.add('bg-success');
+                    } else {
+                        progressBar.classList.remove('bg-success');
+                        progressBar.classList.add('bg-primary');
+                    }
+                }
+
+                if (counterBadge) {
+                    counterBadge.textContent = `${completed}/${total}`;
+                }
+
+                if (pctLabel) {
+                    pctLabel.textContent = `${pct}% Completed`;
+                }
+            }
+
+            // TOGGLE CHECKBOX
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.classList.contains('checklist-toggle')) {
+                    const id = e.target.getAttribute('data-id');
+                    const isChecked = e.target.checked;
+                    const titleSpan = document.getElementById('chk-title-' + id);
+                    const metaDiv = document.getElementById('chk-meta-' + id);
+
+                    if (isChecked) {
+                        titleSpan.classList.add('text-muted', 'text-strikethrough');
+                        titleSpan.classList.remove('font-weight-500', 'text-dark');
+                    } else {
+                        titleSpan.classList.remove('text-muted', 'text-strikethrough');
+                        titleSpan.classList.add('font-weight-500', 'text-dark');
+                    }
+
+                    fetch(`/checklists/${id}/toggle`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.is_completed) {
+                                metaDiv.innerHTML = `<i class="fa fa-check text-success mr-1"></i> Completed by ${data.completed_by_name || 'You'} just now`;
+                            } else {
+                                metaDiv.innerHTML = '';
+                            }
+                            updateProgressUI(data.stats);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Checklist toggle error:', err);
+                    });
+                }
+            });
+
+            // ADD CHECKLIST FORM
+            const addForm = document.getElementById('add-checklist-form');
+            if (addForm) {
+                addForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const input = document.getElementById('new-checklist-input');
+                    const title = input.value.trim();
+                    if (!title) return;
+
+                    const addBtn = document.getElementById('add-checklist-btn');
+                    addBtn.disabled = true;
+
+                    fetch(addForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ title: title })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        addBtn.disabled = false;
+                        if (data.success && data.checklist) {
+                            input.value = '';
+                            const emptyState = document.getElementById('checklist-empty-state');
+                            if (emptyState) emptyState.remove();
+
+                            const item = data.checklist;
+                            const container = document.getElementById('checklist-items-container');
+
+                            const newItemHtml = `
+                                <div class="checklist-item d-flex align-items-center justify-content-between p-2 mb-2 rounded border bg-light" 
+                                     id="checklist-item-${item.id}" 
+                                     data-id="${item.id}">
+                                    <div class="d-flex align-items-center flex-grow-1 mr-3">
+                                        <div class="custom-control custom-checkbox mr-3">
+                                            <input type="checkbox" 
+                                                   class="custom-control-input checklist-toggle" 
+                                                   id="chk-${item.id}" 
+                                                   data-id="${item.id}">
+                                            <label class="custom-control-label" for="chk-${item.id}"></label>
+                                        </div>
+                                        <div>
+                                            <span class="checklist-title text-dark font-weight-500" 
+                                                  id="chk-title-${item.id}">
+                                                ${item.title}
+                                            </span>
+                                            <div class="checklist-meta text-muted small" id="chk-meta-${item.id}"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-link text-danger p-1 delete-checklist-btn" 
+                                                data-id="${item.id}"
+                                                title="Delete Subtask">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+
+                            container.insertAdjacentHTML('beforeend', newItemHtml);
+                            updateProgressUI(data.stats);
+                        }
+                    })
+                    .catch(err => {
+                        addBtn.disabled = false;
+                        console.error('Checklist add error:', err);
+                    });
+                });
+            }
+
+            // DELETE CHECKLIST ITEM
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.delete-checklist-btn');
+                if (btn) {
+                    const id = btn.getAttribute('data-id');
+                    if (!id) return;
+
+                    fetch(`/checklists/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const itemEl = document.getElementById('checklist-item-' + id);
+                            if (itemEl) {
+                                itemEl.remove();
+                            }
+                            updateProgressUI(data.stats);
+
+                            const container = document.getElementById('checklist-items-container');
+                            if (container && container.children.length === 0) {
+                                container.innerHTML = `
+                                    <div id="checklist-empty-state" class="text-center py-3 text-muted">
+                                        <i class="fa fa-tasks fa-2x mb-2 text-muted opacity-50"></i>
+                                        <p class="mb-0 small">No subtasks yet. Break down this task into smaller steps below.</p>
+                                    </div>
+                                `;
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Checklist delete error:', err);
+                    });
+                }
+            });
+        });
+    </script>
 </x-layouts.app>

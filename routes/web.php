@@ -55,6 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/timesheets', [\App\Http\Controllers\TimeLogController::class, 'index'])->name('timesheets.index');
     Route::post('/tasks/{task}/time-logs', [\App\Http\Controllers\TimeLogController::class, 'store'])->name('tasks.time-logs.store');
     Route::delete('/time-logs/{timeLog}', [\App\Http\Controllers\TimeLogController::class, 'destroy'])->name('tasks.time-logs.destroy');
+
+    // Task Checklists & Subtasks Routes
+    Route::post('/tasks/{task}/checklists', [\App\Http\Controllers\TaskChecklistController::class, 'store'])->name('tasks.checklists.store');
+    Route::patch('/checklists/{checklist}/toggle', [\App\Http\Controllers\TaskChecklistController::class, 'toggle'])->name('tasks.checklists.toggle');
+    Route::delete('/checklists/{checklist}', [\App\Http\Controllers\TaskChecklistController::class, 'destroy'])->name('tasks.checklists.destroy');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

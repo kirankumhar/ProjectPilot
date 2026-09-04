@@ -15,7 +15,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Task::with(['project', 'assignee'])->withCount('comments');
+        $query = Task::with(['project', 'assignee', 'checklists'])->withCount('comments');
 
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -123,6 +123,7 @@ class TaskController extends Controller
             'assignee',
             'comments.user',
             'timeLogs.user',
+            'checklists.completedBy',
         ]);
 
         return view('tasks.show', compact('task'));

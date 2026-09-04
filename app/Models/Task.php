@@ -105,5 +105,38 @@ class Task extends Model
         $estimated = (float) $this->estimated_hours;
         return $estimated > 0 && $this->total_logged_hours > $estimated;
     }
+
+    public function checklists()
+    {
+        return $this->hasMany(TaskChecklist::class)->orderBy('is_completed', 'asc')->orderBy('order', 'asc')->orderBy('id', 'asc');
+    }
+
+    public function getChecklistTotalCountAttribute(): int
+    {
+        if ($this->relationLoaded('checklists')) {
+            return $this->checklists->count();
+        }
+
+        return $this->checklists()->count();
+    }
+
+    public function getChecklistCompletedCountAttribute(): int
+    {
+        if ($this->relationLoaded('checklists')) {
+            return $this->checklists->where('is_completed', true)->count();
+        }
+
+        return $this->checklists()->where('is_completed', true)->count();
+    }
+
+    public function getChecklistProgressPercentageAttribute(): int
+    {
+        $total = $this->checklist_total_count;
+        if ($total <= 0) {
+            return 0;
+        }
+
+        return (int) round(($this->checklist_completed_count / $total) * 100);
+    }
 }
 
