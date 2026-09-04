@@ -272,17 +272,22 @@
                                 @forelse($tasks as $task)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('tasks.edit', $task) }}" class="font-weight-bold text-dark">
+                                            <a href="{{ route('tasks.show', $task) }}" class="font-weight-bold text-dark">
                                                 {{ $task->title }}
                                             </a>
                                             @if($task->description)
                                                 <div class="small text-muted">{{ Str::limit($task->description, 50) }}</div>
                                             @endif
-                                            @if($task->attachment)
-                                                <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mt-1" title="{{ $task->attachment_name }}">
-                                                    <i class="fa fa-paperclip margin-right-5"></i> Attachment
+                                            <div class="mt-1">
+                                                @if($task->attachment)
+                                                    <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mr-1" title="{{ $task->attachment_name }}">
+                                                        <i class="fa fa-paperclip margin-right-5"></i> Attachment
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('tasks.show', $task) }}#comments-section" class="badge {{ ($task->comments_count ?? 0) > 0 ? 'badge-primary' : 'badge-light text-muted border' }}" title="{{ $task->comments_count ?? 0 }} comments">
+                                                    <i class="fa fa-comments margin-right-5"></i>{{ $task->comments_count ?? 0 }}
                                                 </a>
-                                            @endif
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="badge {{ $task->type_badge_class }}">
@@ -325,6 +330,9 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
+                                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-light btn-sm btn-icon" title="View Details & Comments">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
                                                 <a href="{{ route('tasks.edit', $task) }}" class="btn btn-light btn-sm btn-icon" title="Edit">
                                                     <i class="fa fa-pencil"></i>
                                                 </a>

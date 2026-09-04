@@ -94,7 +94,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['owner', 'members', 'tasks.assignee']);
+        $project->load(['owner', 'members', 'tasks.assignee', 'tasks.comments']);
         $allUsers = User::orderBy('name')->get();
 
         $taskTypesCount = [

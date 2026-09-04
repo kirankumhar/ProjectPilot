@@ -4,6 +4,14 @@
             <h1 class="title">Edit Task</h1>
             <p class="caption">Update task details and progress</p>
         </div>
+        <div class="page-heading__container float-right d-none d-sm-block">
+            <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-info margin-right-5">
+                <i class="fa fa-comments margin-right-5"></i> View Details & Discussion
+            </a>
+            <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">
+                <i class="fa fa-arrow-left margin-right-5"></i> Back to Board
+            </a>
+        </div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>

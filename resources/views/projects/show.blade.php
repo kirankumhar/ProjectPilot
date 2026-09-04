@@ -158,17 +158,22 @@
                                     @forelse($project->tasks as $task)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('tasks.edit', $task) }}" class="text-bold text-dark">
+                                                <a href="{{ route('tasks.show', $task) }}" class="text-bold text-dark">
                                                     {{ $task->title }}
                                                 </a>
                                                 @if($task->description)
                                                     <div class="small text-muted">{{ Str::limit($task->description, 40) }}</div>
                                                 @endif
-                                                @if($task->attachment)
-                                                    <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mt-1" title="{{ $task->attachment_name }}">
-                                                        <i class="fa fa-paperclip margin-right-5"></i> File
+                                                <div class="mt-1">
+                                                    @if($task->attachment)
+                                                        <a href="{{ $task->attachment_url }}" target="_blank" class="badge badge-info mr-1" title="{{ $task->attachment_name }}">
+                                                            <i class="fa fa-paperclip margin-right-5"></i> File
+                                                        </a>
+                                                    @endif
+                                                    <a href="{{ route('tasks.show', $task) }}#comments-section" class="badge {{ $task->comments->count() > 0 ? 'badge-primary' : 'badge-light text-muted border' }}" title="{{ $task->comments->count() }} comments">
+                                                        <i class="fa fa-comments margin-right-5"></i>{{ $task->comments->count() }}
                                                     </a>
-                                                @endif
+                                                </div>
                                             </td>
                                             <td>
                                                 <small class="font-weight-bold">
@@ -200,6 +205,9 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
+                                                    <a href="{{ route('tasks.show', $task) }}" class="btn btn-light btn-sm btn-icon" title="View Details & Comments">
+                                                        <span class="fa fa-eye"></span>
+                                                    </a>
                                                     <a href="{{ route('tasks.edit', $task) }}" class="btn btn-light btn-sm btn-icon" title="Edit Task">
                                                         <span class="fa fa-pencil"></span>
                                                     </a>

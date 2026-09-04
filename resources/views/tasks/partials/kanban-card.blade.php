@@ -13,7 +13,7 @@
         <small class="text-muted font-weight-bold" style="font-size: 0.75rem;">#TSK-{{ str_pad($task->id, 4, '0', STR_PAD_LEFT) }}</small>
     </div>
 
-    <a href="{{ route('tasks.edit', $task) }}" class="task-title">
+    <a href="{{ route('tasks.show', $task) }}" class="task-title">
         {{ $task->title }}
     </a>
 
@@ -50,6 +50,11 @@
                     <i class="fa fa-paperclip"></i>
                 </a>
             @endif
+
+            <!-- COMMENTS BADGE -->
+            <a href="{{ route('tasks.show', $task) }}#comments-section" class="badge {{ ($task->comments_count ?? 0) > 0 ? 'badge-primary' : 'badge-light text-muted border' }}" title="{{ $task->comments_count ?? 0 }} comments">
+                <i class="fa fa-comments margin-right-5"></i>{{ $task->comments_count ?? 0 }}
+            </a>
         </div>
 
         <div class="d-flex align-items-center">
@@ -62,6 +67,9 @@
                     <i class="fa fa-ellipsis-v" style="float: none; margin: 0; line-height: 1; font-size: 14px;"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{{ route('tasks.show', $task) }}">
+                        <i class="fa fa-eye text-info margin-right-5"></i> View Details & Comments
+                    </a>
                     <a class="dropdown-item" href="{{ route('tasks.edit', $task) }}">
                         <i class="fa fa-pencil text-primary margin-right-5"></i> Edit Task
                     </a>

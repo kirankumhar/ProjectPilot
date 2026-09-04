@@ -15,7 +15,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Task::with(['project', 'assignee']);
+        $query = Task::with(['project', 'assignee'])->withCount('comments');
 
         if ($request->filled('type')) {
             $query->where('type', $request->type);
@@ -110,7 +110,13 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return redirect()->route('tasks.edit', $task);
+        $task->load([
+            'project',
+            'assignee',
+            'comments.user',
+        ]);
+
+        return view('tasks.show', compact('task'));
     }
 
     /**

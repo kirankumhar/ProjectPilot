@@ -22,14 +22,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 use App\Http\Controllers\ChatController;
 
-Route::middleware('auth')->group(function (){
+Route::middleware('auth')->group(function () {
     Route::resource('projects', ProjectController::class);
     Route::patch('/tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
     Route::resource('tasks', TaskController::class);
+
+    // Task Comments Routes
+    Route::post('/tasks/{task}/comments', [\App\Http\Controllers\TaskCommentController::class, 'store'])->name('tasks.comments.store');
+    Route::delete('/comments/{comment}', [\App\Http\Controllers\TaskCommentController::class, 'destroy'])->name('tasks.comments.destroy');
 
     // Team Chat Routes
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');

@@ -58,13 +58,22 @@ class Project extends Model
         return $this->belongsToMany(User::class, 'project_members', 'project_id', 'user_id')->withTimestamps();
     }
 
-    public function getProgressPercentageAttribute()
+    public function getProgressPercentageAttribute(): int
     {
+        if ($this->relationLoaded('tasks')) {
+            $total = $this->tasks->count();
+            if ($total === 0) {
+                return $this->status === 'completed' ? 100 : 0;
+            }
+            $completed = $this->tasks->where('status', 'completed')->count();
+            return (int) round(($completed / $total) * 100);
+        }
+
         $total = $this->tasks()->count();
         if ($total === 0) {
             return $this->status === 'completed' ? 100 : 0;
         }
         $completed = $this->tasks()->where('status', 'completed')->count();
-        return round(($completed / $total) * 100);
+        return (int) round(($completed / $total) * 100);
     }
 }
