@@ -83,6 +83,16 @@
                     </a>
                 </li>
 
+                <li class="{{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('notifications.index') }}">
+                        <span class="icon li-alarm"></span> 
+                        <span class="text">Notifications</span>
+                        @if(auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                            <span class="badge badge-danger badge-pill float-right mt-1" style="font-size: 10px;">{{ auth()->user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+
                 @if(auth()->check() && auth()->user()->isAdmin())
                 <li class="openable {{ request()->routeIs('users.*') ? 'open active' : '' }}">
                     <a href="#">

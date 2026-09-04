@@ -33,7 +33,68 @@
                 </form>
             </div>
             <div class="box-fluid"></div>
-            <div class="box">
+            <div class="box d-flex align-items-center">
+                <!-- NOTIFICATIONS BELL DROPDOWN -->
+                @auth
+                    @php
+                        $unreadNotificationsCount = auth()->user()->unreadNotifications->count();
+                        $recentNotifications = auth()->user()->notifications()->take(5)->get();
+                    @endphp
+                    <div class="dropdown float-left mr-2">
+                        <button class="btn btn-light btn-icon position-relative" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Notifications" style="width: 36px; height: 36px; padding: 0;">
+                            <i class="fa fa-bell-o text-dark" style="font-size: 16px; margin: 0; line-height: 1;"></i>
+                            @if($unreadNotificationsCount > 0)
+                                <span class="badge badge-danger position-absolute" style="top: -2px; right: -2px; font-size: 9px; padding: 2px 5px; border-radius: 10px;">
+                                    {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
+                                </span>
+                            @endif
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow-lg p-0" style="width: 330px; max-width: 90vw;">
+                            <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                                <strong class="text-dark"><i class="fa fa-bell text-primary mr-1"></i> Notifications</strong>
+                                @if($unreadNotificationsCount > 0)
+                                    <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link btn-sm text-primary p-0" style="font-size: 0.75rem;">Mark all read</button>
+                                    </form>
+                                @endif
+                            </div>
+                            <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                                @forelse($recentNotifications as $notif)
+                                    @php
+                                        $isUnread = $notif->unread();
+                                        $data = $notif->data;
+                                    @endphp
+                                    <a href="{{ route('notifications.read', $notif->id) }}" class="list-group-item list-group-item-action p-2 {{ $isUnread ? 'bg-light' : '' }}">
+                                        <div class="d-flex align-items-start">
+                                            <div class="mr-2 mt-1">
+                                                <i class="fa {{ $data['icon'] ?? 'fa-bell' }} {{ $data['icon_color'] ?? 'text-primary' }}"></i>
+                                            </div>
+                                            <div class="flex-grow-1 small" style="min-width: 0;">
+                                                <div class="{{ $isUnread ? 'text-primary font-weight-bold' : 'text-dark' }} text-truncate">{{ $data['title'] ?? 'Notification' }}</div>
+                                                <div class="text-muted" style="font-size: 0.75rem; line-height: 1.3;">{{ Str::limit($data['message'] ?? '', 55) }}</div>
+                                                <div class="text-muted" style="font-size: 0.7rem;"><i class="fa fa-clock-o mr-1"></i>{{ $notif->created_at->diffForHumans() }}</div>
+                                            </div>
+                                            @if($isUnread)
+                                                <span class="badge badge-primary badge-pill ml-1" style="font-size: 8px;">•</span>
+                                            @endif
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="p-3 text-center text-muted small">
+                                        <i class="fa fa-bell-slash-o mb-1 d-block"></i> No notifications yet
+                                    </div>
+                                @endforelse
+                            </div>
+                            <div class="p-2 text-center border-top bg-white">
+                                <a href="{{ route('notifications.index') }}" class="small text-primary font-weight-bold">
+                                    View All Notifications <i class="fa fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endauth
+
                 <div class="dropdown float-left">
                     <button class="btn btn-light btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="li-clipboard-alert"></span>

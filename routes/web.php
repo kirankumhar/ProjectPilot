@@ -40,6 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
     Route::get('/chat/fetch/{user}', [ChatController::class, 'fetchMessages'])->name('chat.fetch');
     Route::delete('/chat/{message}', [ChatController::class, 'destroy'])->name('chat.destroy');
+
+    // In-App Notifications Routes
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'readAndRedirect'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

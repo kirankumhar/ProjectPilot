@@ -31,6 +31,18 @@ class TaskCommentController extends Controller
             'attachment' => $attachmentPath,
         ]);
 
+        $comment->load(['task.project', 'user']);
+
+        // Notify task assignee if not the commenter
+        if ($task->assigned_to && $task->assigned_to !== Auth::id()) {
+            $task->assignee?->notify(new \App\Notifications\TaskCommentNotification($comment));
+        }
+
+        // Notify project owner if different from commenter and assignee
+        if ($task->project && $task->project->user_id && $task->project->user_id !== Auth::id() && $task->project->user_id !== $task->assigned_to) {
+            $task->project->owner?->notify(new \App\Notifications\TaskCommentNotification($comment));
+        }
+
         if ($request->ajax() || $request->wantsJson()) {
             $comment->load('user');
             return response()->json([

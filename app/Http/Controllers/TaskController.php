@@ -94,7 +94,14 @@ class TaskController extends Controller
             $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
         }
 
-        Task::create($validated);
+        $task = Task::create($validated);
+        $task->load('project');
+
+        // Notify assigned user if different from creator
+        if ($task->assigned_to && $task->assigned_to !== auth()->id()) {
+            $assignee = User::find($task->assigned_to);
+            $assignee?->notify(new \App\Notifications\TaskAssignedNotification($task));
+        }
 
         if ($request->filled('redirect_to_project')) {
             return redirect()->route('projects.show', $validated['project_id'])
@@ -155,7 +162,15 @@ class TaskController extends Controller
             $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
         }
 
+        $previousAssigneeId = $task->assigned_to;
         $task->update($validated);
+        $task->load('project');
+
+        // If assignee changed and is not the current user, notify new assignee
+        if ($task->assigned_to && $task->assigned_to !== $previousAssigneeId && $task->assigned_to !== auth()->id()) {
+            $newAssignee = User::find($task->assigned_to);
+            $newAssignee?->notify(new \App\Notifications\TaskAssignedNotification($task));
+        }
 
         return redirect()->route('tasks.index')
             ->with('success', 'Task updated successfully!');
@@ -190,6 +205,17 @@ class TaskController extends Controller
         $task->update([
             'status' => $validated['status'],
         ]);
+        $task->load(['project', 'assignee']);
+
+        // Notify assignee if not current user
+        if ($task->assigned_to && $task->assigned_to !== auth()->id()) {
+            $task->assignee?->notify(new \App\Notifications\TaskStatusChangedNotification($task, auth()->user()));
+        }
+
+        // Notify project owner if different from current user and assignee
+        if ($task->project && $task->project->user_id && $task->project->user_id !== auth()->id() && $task->project->user_id !== $task->assigned_to) {
+            $task->project->owner?->notify(new \App\Notifications\TaskStatusChangedNotification($task, auth()->user()));
+        }
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
