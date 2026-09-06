@@ -7,6 +7,8 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use Inertia\Inertia;
+
 class DashboardController extends Controller
 {
     public function index()
@@ -35,17 +37,17 @@ class DashboardController extends Controller
             ->take(8)
             ->get();
 
-        return view('dashboard.index', compact(
-            'totalProjects',
-            'activeProjects',
-            'completedProjects',
-            'totalTasks',
-            'pendingTasks',
-            'completedTasks',
-            'totalMembers',
-            'recentProjects',
-            'recentTasks',
-            'recentActivities'
-        ));
+        return Inertia::render('Dashboard', [
+            'totalProjects' => $totalProjects,
+            'activeProjects' => $activeProjects,
+            'completedProjects' => $completedProjects,
+            'totalTasks' => $totalTasks,
+            'pendingTasks' => $pendingTasks,
+            'completedTasks' => $completedTasks,
+            'totalMembers' => $totalMembers,
+            'recentProjects' => $recentProjects,
+            'recentTasks' => $recentTasks,
+            'recentActivities' => $recentActivities,
+        ]);
     }
 }

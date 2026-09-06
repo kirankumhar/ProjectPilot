@@ -17,9 +17,14 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                            <div className="flex shrink-0 items-center gap-2">
+                                <Link href={route('dashboard')} className="flex items-center gap-2.5">
+                                    <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
+                                        P
+                                    </div>
+                                    <span className="font-bold text-lg text-gray-900 tracking-tight">
+                                        Project<span className="text-indigo-600">Pilot</span>
+                                    </span>
                                 </Link>
                             </div>
 
@@ -29,6 +34,30 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('dashboard')}
                                 >
                                     Dashboard
+                                </NavLink>
+                                <NavLink
+                                    href={route('projects.index')}
+                                    active={route().current('projects.*')}
+                                >
+                                    Projects
+                                </NavLink>
+                                <NavLink
+                                    href={route('tasks.index')}
+                                    active={route().current('tasks.*')}
+                                >
+                                    Tasks
+                                </NavLink>
+                                <NavLink
+                                    href={route('calendar.index')}
+                                    active={route().current('calendar.*')}
+                                >
+                                    Calendar
+                                </NavLink>
+                                <NavLink
+                                    href={route('timesheets.index')}
+                                    active={route().current('timesheets.*')}
+                                >
+                                    Timesheets
                                 </NavLink>
                             </div>
                         </div>
@@ -133,6 +162,30 @@ export default function AuthenticatedLayout({ header, children }) {
                             active={route().current('dashboard')}
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('projects.index')}
+                            active={route().current('projects.*')}
+                        >
+                            Projects
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('tasks.index')}
+                            active={route().current('tasks.*')}
+                        >
+                            Tasks
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('calendar.index')}
+                            active={route().current('calendar.*')}
+                        >
+                            Calendar
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('timesheets.index')}
+                            active={route().current('timesheets.*')}
+                        >
+                            Timesheets
                         </ResponsiveNavLink>
                     </div>
 
