@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,10 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::composer('*', function ($view) {
-            if (!isset($view->getData()['errors'])) {
-                $view->with('errors', session('errors', new \Illuminate\Support\ViewErrorBag));
-            }
-        });
+        Vite::prefetch(concurrency: 3);
     }
 }

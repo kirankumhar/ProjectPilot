@@ -18,7 +18,6 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['nullable', 'string', 'in:developer,backend_dev,frontend_dev,manager,admin'],
             'email' => [
                 'required',
                 'string',
@@ -27,8 +26,6 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
-            'remove_avatar' => ['nullable', 'boolean'],
         ];
     }
 }
