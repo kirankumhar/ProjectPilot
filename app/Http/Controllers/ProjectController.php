@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
@@ -44,7 +45,14 @@ class ProjectController extends Controller
             'maintenance' => Project::where('type', 'maintenance')->count(),
         ];
 
-        return view('projects.index', compact('projects', 'stats'));
+        $allUsers = User::orderBy('name')->get(['id', 'name', 'email']);
+
+        return Inertia::render('Projects/Index', [
+            'projects' => $projects,
+            'stats' => $stats,
+            'filters' => $request->only(['search', 'type', 'status', 'priority']),
+            'allUsers' => $allUsers,
+        ]);
     }
 
     /**
@@ -52,8 +60,10 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $users = User::orderBy('name')->get();
-        return view('projects.create', compact('users'));
+        $users = User::orderBy('name')->get(['id', 'name', 'email']);
+        return Inertia::render('Projects/Create', [
+            'users' => $users
+        ]);
     }
 
     /**
@@ -102,7 +112,7 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load(['owner', 'members', 'tasks.assignee', 'tasks.comments', 'activities.user']);
-        $allUsers = User::orderBy('name')->get();
+        $allUsers = User::orderBy('name')->get(['id', 'name', 'email']);
 
         $taskTypesCount = [
             'feature' => $project->tasks->where('type', 'feature')->count(),
@@ -112,7 +122,11 @@ class ProjectController extends Controller
             'cr' => $project->tasks->where('type', 'cr')->count(),
         ];
 
-        return view('projects.show', compact('project', 'allUsers', 'taskTypesCount'));
+        return Inertia::render('Projects/Show', [
+            'project' => $project,
+            'allUsers' => $allUsers,
+            'taskTypesCount' => $taskTypesCount,
+        ]);
     }
 
     /**
@@ -120,10 +134,13 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        $users = User::orderBy('name')->get();
+        $users = User::orderBy('name')->get(['id', 'name', 'email']);
         $project->load('members');
 
-        return view('projects.edit', compact('project', 'users'));
+        return Inertia::render('Projects/Edit', [
+            'project' => $project,
+            'users' => $users,
+        ]);
     }
 
     /**
